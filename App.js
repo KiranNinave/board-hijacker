@@ -137,14 +137,14 @@ const App = () => {
                         name="activity"
                         size={getResponsiveDimention(72)}
                         color={
-                          channelsData[item].status === 0 ? colors["#FFF"] : colors["000"]
+                          channelsData[item].status === 0 ? colors["#FFF"] : "#000"
                         }
                     />
                     <View style={styles.chanelContentContainer}>
                         <Text
                             style={StyleSheet.flatten([
                                 styles.chanelName,
-                                { color: colors["#FFF"] },
+                                { color: channelsData[item].status === 0 ? colors["#FFF"] : "#000" },
                             ])}
                         >
                             {channelsData[item].name}
