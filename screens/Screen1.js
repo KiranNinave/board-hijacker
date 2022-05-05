@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import {
   View,
   StyleSheet,
@@ -16,10 +16,9 @@ import { Feather } from "@expo/vector-icons";
 import { MaterialIcons } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import axios from "axios";
-import DateTimePicker from "@react-native-community/datetimepicker";
 
 const instance = axios.create({
-  baseURL: "http://192.168.0.106/",
+  baseURL: "http://192.168.0.104/",
   timeout: 1000,
 });
 
@@ -44,7 +43,7 @@ const themes = {
   },
 };
 
-const App = () => {
+const Screen1 = () => {
   const [fontsLoaded] = useFonts({
     "Poppins-Regular": require("./assets/fonts/Poppins/Poppins-Regular.ttf"),
     "Poppins-Medium": require("./assets/fonts/Poppins/Poppins-Medium.ttf"),
@@ -99,27 +98,6 @@ const App = () => {
       status: 0,
     },
   });
-  const [timers, setTimers] = useState({});
-  const selectedChanel = useRef();
-  const [show, setShow] = useState(false);
-
-  const onChangeDate = (event, selectedDate) => {
-    const currentDate = new Date(selectedDate);
-    currentDate.setSeconds(0);
-    currentDate.setMilliseconds(0);
-    const now = new Date();
-    const timeDiff = currentDate - now;
-    if (timeDiff && selectedChanel.current) {
-      const chanel = selectedChanel.current;
-      setTimers({ ...timers, [chanel]: Math.round(timeDiff / 1000) });
-      setTimeout(() => {
-        onPressChanel(chanel);
-        setTimers({ ...timers, [chanel]: false });
-      }, timeDiff);
-      selectedChanel.current = null;
-    }
-    setShow(false);
-  };
 
   const onPressChanel = async (chanel) => {
     try {
@@ -141,12 +119,6 @@ const App = () => {
     }
   };
 
-  const onLongPressChanel = async (chanel) => {
-    selectedChanel.current = chanel;
-    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
-    setShow(true);
-  };
-
   const renderHeader = () => {
     return (
       <View style={styles.header}>
@@ -161,10 +133,7 @@ const App = () => {
 
   const renderItem = ({ item, index }) => {
     return (
-      <TouchableWithoutFeedback
-        onPress={() => onPressChanel(item)}
-        onLongPress={() => onLongPressChanel(item)}
-      >
+      <TouchableWithoutFeedback onPress={() => onPressChanel(item)}>
         <View
           style={StyleSheet.flatten([
             styles.chanel,
@@ -205,11 +174,7 @@ const App = () => {
                 },
               ])}
             >
-              {timers[item]
-                ? `${timers[item]}sec`
-                : channelsData[item].status === 0
-                ? "Off"
-                : "On"}
+              {channelsData[item].status === 0 ? "Off" : "On"}
             </Text>
           </View>
         </View>
@@ -321,14 +286,6 @@ const App = () => {
               numColumns={2}
               ListFooterComponent={renderFooter}
             />
-            {show ? (
-              <DateTimePicker
-                value={new Date()}
-                mode="time"
-                display="clock"
-                onChange={onChangeDate}
-              />
-            ) : null}
           </View>
         )}
       </View>
@@ -337,9 +294,6 @@ const App = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-  },
   container: {
     flex: 1,
   },
@@ -451,4 +405,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default App;
+export default Screen1;
